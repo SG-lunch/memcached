@@ -3027,8 +3027,7 @@ enum store_item_type do_store_item(item *it, int comm, conn *c, const uint32_t h
             pthread_mutex_lock(&c->thread->stats.mutex);
             c->thread->stats.cas_misses++;
             pthread_mutex_unlock(&c->thread->stats.mutex);
-        }
-        else if (ITEM_get_cas(it) == ITEM_get_cas(old_it)) {
+        } else if (ITEM_get_cas(it) == ITEM_get_cas(old_it)) {
             // cas validates
             // it and old_it may belong to different classes.
             // I'm updating the stats for the one that's getting pushed out
@@ -6808,7 +6807,7 @@ static void drive_machine(conn *c) {
 
         case conn_parse_cmd :
             if (c->try_read_command(c) == 0) {
-                /* wee need more data! */
+                /* we need more data! */
                 conn_set_state(c, conn_waiting);
             }
 
@@ -8718,13 +8717,13 @@ int main (int argc, char **argv) {
 #endif
             settings.sasl = true;
             break;
-       case 'F' :
+		case 'F' :
             settings.flush_enabled = false;
             break;
-       case 'X' :
+		case 'X' :
             settings.dump_enabled = false;
             break;
-       case 'Y' :
+		case 'Y' :
             // dupe the file path now just in case the options get mangled.
             settings.auth_file = strdup(optarg);
             break;
