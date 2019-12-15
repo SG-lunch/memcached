@@ -436,6 +436,10 @@ struct settings {
     unsigned int ext_wbuf_size; /* read only note for the engine */
     unsigned int ext_compact_under; /* when fewer than this many pages, compact */
     unsigned int ext_drop_under; /* when fewer than this many pages, drop COLD items */
+
+    /* Wufan : the number of device we use */
+    unsigned int ext_device_num;
+
     double ext_max_frag; /* ideal maximum page fragmentation */
     double slab_automove_freeratio; /* % of memory to hold free as buffer */
     bool ext_drop_unread; /* skip unread items during compaction */
@@ -497,6 +501,7 @@ typedef struct _stritem {
     rel_time_t      time;       /* least recent access */
     rel_time_t      exptime;    /* expire time */
     int             nbytes;     /* size of data */
+    uint16_t		access_cnt;	/* Wufan : access times */
     unsigned short  refcount;
     uint16_t        it_flags;   /* ITEM_* above */
     uint8_t         slabs_clsid;/* which slab class we're in */

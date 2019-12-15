@@ -486,6 +486,7 @@ int do_item_link(item *it, const uint32_t hv) {
     assert((it->it_flags & (ITEM_LINKED|ITEM_SLABBED)) == 0);
     it->it_flags |= ITEM_LINKED;
     it->time = current_time;
+    ++it->access_cnt;
 
     STATS_LOCK();
     stats_state.curr_bytes += ITEM_ntotal(it);
@@ -554,6 +555,7 @@ void do_item_update(item *it) {
         if ((it->it_flags & ITEM_LINKED) != 0) {
             if (ITEM_lruid(it) == COLD_LRU && (it->it_flags & ITEM_ACTIVE)) {
                 it->time = current_time;
+                ++it->access_cnt;
                 item_unlink_q(it);
                 it->slabs_clsid = ITEM_clsid(it);
                 it->slabs_clsid |= WARM_LRU;
@@ -561,6 +563,7 @@ void do_item_update(item *it) {
                 item_link_q_warm(it);
             } else {
                 it->time = current_time;
+                ++it->access_cnt;
             }
         }
     } else if (it->time < current_time - ITEM_UPDATE_INTERVAL) {
@@ -568,6 +571,7 @@ void do_item_update(item *it) {
 
         if ((it->it_flags & ITEM_LINKED) != 0) {
             it->time = current_time;
+            ++it->access_cnt;
             item_unlink_q(it);
             item_link_q(it);
         }
@@ -1052,6 +1056,7 @@ void do_item_bump(conn *c, item *it, const uint32_t hv) {
                 it->it_flags |= ITEM_ACTIVE;
                 if (ITEM_lruid(it) != COLD_LRU) {
                     it->time = current_time; // only need to bump time.
+                    ++it->access_cnt;
                 } else if (!lru_bump_async(c->thread->lru_bump_buf, it, hv)) {
                     // add flag before async bump to avoid race.
                     it->it_flags &= ~ITEM_ACTIVE;

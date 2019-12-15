@@ -12,6 +12,10 @@
 #define PAGE_BUCKET_COMPACT 1
 #define PAGE_BUCKET_CHUNKED 2
 #define PAGE_BUCKET_LOWTTL  3
+#define PAGE_BUCKET_EXTRA   4 // for eecs project. DEFAULT as NVM, EXTRA as Flash
+
+//#define PAGE_BUCKET_NVM     4
+//#define PAGE_BUCKET_FLASH   5
 
 /*** WRITE FLUSH THREAD ***/
 
@@ -39,8 +43,11 @@ static int storage_write(void *storage, const int clsid, const int item_age) {
          * We will fill it (time/exptime/etc) from the header item on read.
          */
         if (hdr_it != NULL) {
+            /*
             int bucket = (it->it_flags & ITEM_CHUNKED) ?
                 PAGE_BUCKET_CHUNKED : PAGE_BUCKET_DEFAULT;
+            */
+            int bucket = (settings.ext_device_num == 2 && it->access_cnt >= 2) ? PAGE_BUCKET_EXTRA : PAGE_BUCKET_DEFAULT;
             // Compress soon to expire items into similar pages.
             if (it->exptime - current_time < settings.ext_low_ttl) {
                 bucket = PAGE_BUCKET_LOWTTL;
@@ -623,6 +630,8 @@ struct extstore_conf_file *storage_conf_parse(char *arg, unsigned int page_size)
             cf->free_bucket = PAGE_BUCKET_CHUNKED;
         } else if (strcmp(p, "default") == 0) {
             cf->free_bucket = PAGE_BUCKET_DEFAULT;
+        } else if (strcmp(p, "extra") == 0) {
+            cf->free_bucket = PAGE_BUCKET_EXTRA;
         } else {
             fprintf(stderr, "Unknown extstore bucket: %s\n", p);
             goto error;
@@ -633,10 +642,12 @@ struct extstore_conf_file *storage_conf_parse(char *arg, unsigned int page_size)
     }
 
     // TODO: disabling until compact algorithm is improved.
+    /*
     if (cf->free_bucket != PAGE_BUCKET_DEFAULT) {
         fprintf(stderr, "ext_path only presently supports the default bucket\n");
         goto error;
     }
+    */
 
     return cf;
 error:

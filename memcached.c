@@ -8422,8 +8422,11 @@ int main (int argc, char **argv) {
     /* init settings */
     settings_init();
 #ifdef EXTSTORE
-    settings.ext_item_size = 512;
-    settings.ext_item_age = UINT_MAX;
+    //settings.ext_item_size = 512;
+    //settings.ext_item_age = UINT_MAX;
+    settings.ext_item_size = 1;
+    settings.ext_item_age = 0;
+
     settings.ext_low_ttl = 0;
     settings.ext_recache_rate = 2000;
     settings.ext_max_frag = 0.8;
@@ -8436,7 +8439,8 @@ int main (int argc, char **argv) {
     ext_cf.wbuf_size = settings.ext_wbuf_size;
     ext_cf.io_threadcount = 1;
     ext_cf.io_depth = 1;
-    ext_cf.page_buckets = 4;
+    //ext_cf.page_buckets = 4;
+    ext_cf.page_buckets = 5;
     ext_cf.wbuf_count = ext_cf.page_buckets;
 #endif
 
@@ -9189,6 +9193,7 @@ int main (int argc, char **argv) {
                     }
                     if (storage_file != NULL) {
                         tmp->next = storage_file;
+                        ++settings.ext_device_num;
                     }
                     storage_file = tmp;
                 } else {
