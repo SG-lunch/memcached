@@ -9193,9 +9193,9 @@ int main (int argc, char **argv) {
                     }
                     if (storage_file != NULL) {
                         tmp->next = storage_file;
-                        ++settings.ext_device_num;
                     }
                     storage_file = tmp;
+                    ++settings.ext_device_num;
                 } else {
                     fprintf(stderr, "missing argument to ext_path, ie: ext_path=/d/file:5G\n");
                     return 1;
