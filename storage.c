@@ -47,7 +47,12 @@ static int storage_write(void *storage, const int clsid, const int item_age) {
             int bucket = (it->it_flags & ITEM_CHUNKED) ?
                 PAGE_BUCKET_CHUNKED : PAGE_BUCKET_DEFAULT;
             */
+			
             int bucket = (settings.ext_device_num == 2 && it->access_cnt >= 2) ? PAGE_BUCKET_EXTRA : PAGE_BUCKET_DEFAULT;
+			if (settings.print_once == 0) {
+				fprintf(stderr, "bucket %d, settings.ext_device_num %d, it->access_cnt %d\n", bucket, settings.ext_device_num, it->access_cnt);
+				settings.print_once = 1;
+			}
             // Compress soon to expire items into similar pages.
             if (it->exptime - current_time < settings.ext_low_ttl) {
                 bucket = PAGE_BUCKET_LOWTTL;

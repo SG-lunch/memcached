@@ -439,6 +439,7 @@ struct settings {
 
     /* Wufan : the number of device we use */
     unsigned int ext_device_num;
+	unsigned int print_once;
 
     double ext_max_frag; /* ideal maximum page fragmentation */
     double slab_automove_freeratio; /* % of memory to hold free as buffer */
